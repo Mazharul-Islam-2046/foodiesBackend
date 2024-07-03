@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 
 
 
+// Connecting the Database and Starting the Server
 connectDB()
 .then(() => {
   app.listen(port, () => {

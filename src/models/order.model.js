@@ -22,9 +22,10 @@ const orderSchema = new Schema(
     totalAmount: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["Pending", "Confirmed", "Delivered"],
+      enum: ['pending', 'preparing', 'delivered', 'cancelled'],
       default: "Pending",
     },
+    discountApplied: { type: Boolean, default: false },
     deliveryAddress: { type: String, required: true },
     orderedAt: { type: Date, default: Date.now },
   },
