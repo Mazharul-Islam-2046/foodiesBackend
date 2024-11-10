@@ -53,10 +53,6 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
     }],
-    favorites: [{
-      type: Schema.Types.ObjectId,
-      ref: "MenuItem",
-    }],
     firstOrderDiscountUsed: {
       type: Boolean,
       default: false,
@@ -120,6 +116,11 @@ userSchema.methods.generateRefreshToken = function(){
           expiresIn: process.env.REFRESH_TOKEN_EXPIRY
       }
   )
+}
+
+userSchema.methods.updateLastLogin = async function() {
+  this.lastLogin = new Date();
+  return await this.save();
 }
 
 export const User = mongoose.model("User", userSchema);
