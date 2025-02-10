@@ -22,7 +22,7 @@ app.use(cookieParser())
 // Routes Imports
 import userRouter from "./routes/user.routes.js"
 // import restaurantRouter from "./routes/restaurant.routes.js"
-// import menuItemRouter from "./routes/menuItem.routes.js"
+import menuItemRouter from "./routes/menuItem.routes.js"
 // import orderRouter from "./routes/order.routes.js"
 // import notificationRouter from "./routes/notification.routes.js"
 // import favoriteRouter from "./routes/favorite.routes.js"
@@ -31,6 +31,7 @@ import userRouter from "./routes/user.routes.js"
 
 
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/menuItems", menuItemRouter);
 
 
 export default app
