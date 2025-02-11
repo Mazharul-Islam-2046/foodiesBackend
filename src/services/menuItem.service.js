@@ -14,7 +14,7 @@ export class MenuItemService {
     // Get all menu items
     async getAllMenuItems() {
         const menuItems = await MenuItem.find();
-        if (menuItems.length > 0) {
+        if (!menuItems.length > 0) {
             throw new ApiError("No food items found", 404);
         }
         return menuItems;
