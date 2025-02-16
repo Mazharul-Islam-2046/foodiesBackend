@@ -15,7 +15,11 @@ export const getMenuItem = asyncHandler(async (req, res) => {
 
 // Get all menu items
 export const getAllMenuItems = asyncHandler(async (req, res) => {
-    const menuItems = await menuItemService.getAllMenuItems();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+
+    const menuItems = await menuItemService.getAllMenuItems(page, limit);
     return res
         .status(200)
         .json(new ApiResponse(200, menuItems, "Food items retrieved successfully"));
@@ -23,7 +27,7 @@ export const getAllMenuItems = asyncHandler(async (req, res) => {
 
 // Filter menu items
 export const filterMenuItems = asyncHandler(async (req, res) => {
-    const menuItems = await menuItemService.filterMenuItems(req.query);
+    const menuItems = await menuItemService.filterMenuItems(req.params);
     return res
         .status(200)
         .json(new ApiResponse(200, menuItems, "Food items retrieved successfully"));
