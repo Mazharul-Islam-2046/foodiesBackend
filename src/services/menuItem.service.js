@@ -43,7 +43,10 @@ export class MenuItemService {
     }
 
     // Filter menu items
-    async filterMenuItems(filters) {
+    async filterMenuItems({page, limit, filters}) {
+
+        console.log(filters)
+
         const { category, minPrice, maxPrice, freeDelivery, isHealthy } = filters;
         const query = {};
 
@@ -56,11 +59,37 @@ export class MenuItemService {
         if (freeDelivery) query.freeDelivery = freeDelivery;
         if (isHealthy) query.healthy = true;
 
-        const menuItems = await MenuItem.find(query);
+
+        console.log(query);
+
+        // Get total menu items with filters
+        const totalMenuItems = await MenuItem.countDocuments(query);
+
+        
+        // Validate page and limit
+        if (page > Math.ceil(totalMenuItems / limit)) {
+            throw new ApiError("Page not found", 404);
+        }
+
+
+        // Find with pagination
+        const menuItems = await MenuItem.find(query).skip((page - 1) * limit).limit(limit);
+
+        // Check if menu items exist
         if (!menuItems.length > 0) {
             throw new ApiError("No food items found", 404);
         }
-        return menuItems;
+
+        
+
+        const response = {
+            menuItems,
+            currentPage: page,
+            limit,
+            totalPages: Math.ceil(totalMenuItems / limit),
+            totalMenuItems
+        };
+        return response;
     }
 
     // Search menu items

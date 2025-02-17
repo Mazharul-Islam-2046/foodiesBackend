@@ -27,7 +27,13 @@ export const getAllMenuItems = asyncHandler(async (req, res) => {
 
 // Filter menu items
 export const filterMenuItems = asyncHandler(async (req, res) => {
-    const menuItems = await menuItemService.filterMenuItems(req.params);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const filters = req.query;
+
+
+
+    const menuItems = await menuItemService.filterMenuItems({filters, page, limit});
     return res
         .status(200)
         .json(new ApiResponse(200, menuItems, "Food items retrieved successfully"));
