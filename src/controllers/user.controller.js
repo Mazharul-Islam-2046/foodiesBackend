@@ -187,7 +187,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 const getAllUsers = asyncHandler(async (req, res) => {
     const users = await User.find({});
     if (users) {
-        res.status(200).json(users);
+        returnres.status(200).json(users);
     } else {
         throw new ApiError("Users not found", 400);
     }
