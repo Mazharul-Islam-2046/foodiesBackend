@@ -39,6 +39,23 @@ export const filterMenuItems = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, menuItems, "Food items retrieved successfully"));
 })
 
+
+// Get Popular menu items
+export const getPopularMenuItems = asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+
+    const menuItems = await menuItemService.getPopularMenuItems( page, limit);
+
+    
+    return res
+        .status(200)
+        .json(new ApiResponse(200, menuItems, "Popular food items retrieved successfully"));
+})
+
+
+
 // Search menu items
 export const searchMenuItems = asyncHandler(async (req, res) => {
     const menuItems = await menuItemService.searchMenuItems(req.query.name);

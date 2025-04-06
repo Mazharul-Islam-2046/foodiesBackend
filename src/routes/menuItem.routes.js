@@ -6,7 +6,8 @@ import {
     getMenuItem,
     getAllMenuItems,
     filterMenuItems,
-    searchMenuItems
+    searchMenuItems,
+    getPopularMenuItems
 } from "../controllers/menu.controller.js";
 
 
@@ -20,6 +21,7 @@ menuItemRouter.route("/getMenuItem/:id").get(getMenuItem);
 menuItemRouter.route("/getAllMenuItems").get(getAllMenuItems);
 menuItemRouter.route("/filterMenuItems").get(filterMenuItems);
 menuItemRouter.route("/searchMenuItems").get(searchMenuItems);
+menuItemRouter.route("/getPopularMenuItems").get(getPopularMenuItems);
 
 
 export default menuItemRouter;

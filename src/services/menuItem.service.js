@@ -92,6 +92,41 @@ export class MenuItemService {
         return response;
     }
 
+
+    // Get Popular menu items
+    async getPopularMenuItems(page, limit) {
+
+        const totalMenuItems = await MenuItem.countDocuments();
+
+        // Validate page and limit
+        if (page > Math.ceil(totalMenuItems / limit)) {
+            throw new ApiError("Page not found", 404);
+        }
+        
+
+
+        // Find with pagination
+        const menuItems = await MenuItem.find({ popularity: { $gte: 85 } })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+
+        // Check if menu items exist
+        if (!menuItems.length) {
+            throw new ApiError("No popular food items found", 404);
+        }
+
+
+        const response = {
+            menuItems,
+            currentPage: page,
+            limit,
+            totalPages: Math.ceil(totalMenuItems / limit),
+            totalMenuItems
+        };
+        return response;
+    }
+
     // Search menu items
     async searchMenuItems(name) {
         const menuItems = await MenuItem.find({ name: { $regex: name, $options: 'i' } });
