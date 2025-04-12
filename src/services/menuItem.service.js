@@ -48,9 +48,10 @@ export class MenuItemService {
         console.log("filters: ", filters)
         console.log("sortBy: ", sortBy);
 
-        const { category, minPrice, maxPrice, freeDelivery, isHealthy,isPpopular } = filters;
+        const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy,isPpopular } = filters;
         const query = {};
 
+        if (searchName) query.name = { $regex: searchName, $options: "i" };
         if (category) query.category = category;
         if (minPrice || maxPrice) {
             query.price = {};
@@ -115,16 +116,9 @@ export class MenuItemService {
         return response;
     }
 
-    
 
-    // Search menu items
-    async searchMenuItems(name) {
-        const menuItems = await MenuItem.find({ name: { $regex: name, $options: 'i' } });
-        if (!menuItems.length > 0) {
-            throw new ApiError("No food items found", 404);
-        }
-        return menuItems;
-    }
+
+    
 
     // Create menu item
     async createMenuItem(menuItemData) {
