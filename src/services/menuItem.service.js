@@ -45,9 +45,10 @@ export class MenuItemService {
     // Filter menu items
     async filterMenuItems({page, limit, filters, sortBy}) {
 
-        console.log(filters)
+        console.log("filters: ", filters)
+        console.log("sortBy: ", sortBy);
 
-        const { category, minPrice, maxPrice, freeDelivery, isHealthy } = filters;
+        const { category, minPrice, maxPrice, freeDelivery, isHealthy,isPpopular } = filters;
         const query = {};
 
         if (category) query.category = category;
@@ -58,9 +59,11 @@ export class MenuItemService {
         }
         if (freeDelivery) query.freeDelivery = freeDelivery;
         if (isHealthy) query.healthy = true;
+        if (isPpopular) query.popularity = { $gte: 85 };
 
 
-        console.log(query);
+
+        console.log("query: ", query);
 
         // Get total menu items with filters
         const totalMenuItems = await MenuItem.countDocuments(query);
@@ -112,40 +115,7 @@ export class MenuItemService {
         return response;
     }
 
-
-    // Get Popular menu items
-    async getPopularMenuItems(page, limit) {
-
-        const totalMenuItems = await MenuItem.countDocuments();
-
-        // Validate page and limit
-        if (page > Math.ceil(totalMenuItems / limit)) {
-            throw new ApiError("Page not found", 404);
-        }
-        
-
-
-        // Find with pagination
-        const menuItems = await MenuItem.find({ popularity: { $gte: 85 } })
-        .skip((page - 1) * limit)
-        .limit(limit);
-
-
-        // Check if menu items exist
-        if (!menuItems.length) {
-            throw new ApiError("No popular food items found", 404);
-        }
-
-
-        const response = {
-            menuItems,
-            currentPage: page,
-            limit,
-            totalPages: Math.ceil(totalMenuItems / limit),
-            totalMenuItems
-        };
-        return response;
-    }
+    
 
     // Search menu items
     async searchMenuItems(name) {
