@@ -43,7 +43,7 @@ export class MenuItemService {
     }
 
     // Filter menu items
-    async filterMenuItems({page, limit, filters}) {
+    async filterMenuItems({page, limit, filters, sortBy}) {
 
         console.log(filters)
 
@@ -71,9 +71,29 @@ export class MenuItemService {
             throw new ApiError("Page not found", 404);
         }
 
+        // Sort menu items
+        let sortOption = {};
+        if (sortBy === "priceLowToHigh") {
+            sortOption = { price: 1 };
+        } else if (sortBy === "priceHighToLow") {
+            sortOption = { price: -1 };
+        } else if (sortBy === "recommended") {
+            sortOption = { recommended: -1 };
+        } else if (sortBy === "highestRated") {
+            sortOption = { highestRated: -1};
+        } else if (sortBy === "popularity") {
+            sortOption = { popularity: -1 };
+        } else if (sortBy === "newest") {
+            sortOption = { createdAt: -1 };
+        }
+
 
         // Find with pagination
-        const menuItems = await MenuItem.find(query).skip((page - 1) * limit).limit(limit);
+        const menuItems = await MenuItem
+        .find(query)
+        .sort(sortOption)
+        .skip((page - 1) * limit)
+        .limit(limit);
 
         // Check if menu items exist
         if (!menuItems.length > 0) {
