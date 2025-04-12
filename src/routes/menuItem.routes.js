@@ -21,7 +21,6 @@ menuItemRouter.route("/getMenuItem/:id").get(getMenuItem);
 menuItemRouter.route("/getAllMenuItems").get(getAllMenuItems);
 menuItemRouter.route("/getFilterMenuItems").get(filterMenuItems);
 menuItemRouter.route("/searchMenuItems").get(searchMenuItems);
-menuItemRouter.route("/getPopularMenuItems").get(getPopularMenuItems);
 
 
 export default menuItemRouter;

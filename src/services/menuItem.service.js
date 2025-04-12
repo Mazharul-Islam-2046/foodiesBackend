@@ -48,7 +48,7 @@ export class MenuItemService {
         console.log("filters: ", filters)
         console.log("sortBy: ", sortBy);
 
-        const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy,isPpopular } = filters;
+        const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy, isPpopular, spicyLevel, dietaryPreferences } = filters;
         const query = {};
 
         if (searchName) query.name = { $regex: searchName, $options: "i" };
@@ -61,6 +61,8 @@ export class MenuItemService {
         if (freeDelivery) query.freeDelivery = freeDelivery;
         if (isHealthy) query.healthy = true;
         if (isPpopular) query.popularity = { $gte: 85 };
+        if (spicyLevel) query.spiceLevel = { $regex: spicyLevel, $options: "i" };
+        if (dietaryPreferences) query.dietaryPreferences = { $all: dietaryPreferences };
 
 
 
@@ -89,6 +91,8 @@ export class MenuItemService {
             sortOption = { popularity: -1 };
         } else if (sortBy === "newest") {
             sortOption = { createdAt: -1 };
+        } else{
+            sortOption = { price: -1 };
         }
 
 

@@ -29,6 +29,23 @@ const menuItemSchema = new Schema(
       type: Number,
       default: 0,
     },
+    dietryPreference: {
+      type: String,
+      enum: ["vegetarian", "nonveg", "vegan", "glutenfree", "dairyfree"],
+      required: true,
+      default: "veg",
+    },
+    spiceLevel: {
+      type: String,
+      enum: ["low", "mild", "medium", "spicy", "hot"],
+      required: true,
+      default: "low",
+    },
+    prepearationTime: {
+      type: string,
+      required: true,
+      enum: ["quick", "medium", "long"],
+    },
     reviews: [
       {
         type: Schema.Types.ObjectId,
