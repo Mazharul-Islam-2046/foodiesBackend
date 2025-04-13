@@ -7,7 +7,6 @@ import {
     getAllMenuItems,
     filterMenuItems,
     searchMenuItems,
-    getPopularMenuItems
 } from "../controllers/menu.controller.js";
 
 

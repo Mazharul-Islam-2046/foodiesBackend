@@ -42,7 +42,7 @@ const menuItemSchema = new Schema(
       default: "low",
     },
     prepearationTime: {
-      type: string,
+      type: String,
       required: true,
       enum: ["quick", "medium", "long"],
     },
