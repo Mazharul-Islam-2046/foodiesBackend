@@ -23,8 +23,8 @@ export class MenuItemService {
 
         // Find with pagination
         const menuItems = await MenuItem.find()
-        .skip((page - 1) * limit)
-        .limit(limit);
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         // Check if menu items exist
         if (!menuItems.length > 0) {
@@ -43,7 +43,7 @@ export class MenuItemService {
     }
 
     // Filter menu items
-    async filterMenuItems({page, limit, filters, sortBy}) {
+    async filterMenuItems({ page, limit, filters, sortBy }) {
 
         console.log("filters: ", filters)
         console.log("sortBy: ", sortBy);
@@ -71,7 +71,7 @@ export class MenuItemService {
         // Get total menu items with filters
         const totalMenuItems = await MenuItem.countDocuments(query);
 
-        
+
         // Validate page and limit
         if (page > Math.ceil(totalMenuItems / limit)) {
             throw new ApiError("Page not found", 404);
@@ -86,29 +86,29 @@ export class MenuItemService {
         } else if (sortBy === "recommended") {
             sortOption = { recommended: -1 };
         } else if (sortBy === "highestRated") {
-            sortOption = { highestRated: -1};
+            sortOption = { highestRated: -1 };
         } else if (sortBy === "popularity") {
             sortOption = { popularity: -1 };
         } else if (sortBy === "newest") {
             sortOption = { createdAt: -1 };
-        } else{
+        } else {
             sortOption = { price: -1 };
         }
 
 
         // Find with pagination
         const menuItems = await MenuItem
-        .find(query)
-        .sort(sortOption)
-        .skip((page - 1) * limit)
-        .limit(limit);
+            .find(query)
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(limit);
 
         // Check if menu items exist
         if (!menuItems.length > 0) {
             throw new ApiError("No food items found", 404);
         }
 
-        
+
 
         const response = {
             menuItems,
@@ -122,7 +122,7 @@ export class MenuItemService {
 
 
 
-    
+
 
     // Create menu item
     async createMenuItem(menuItemData) {
@@ -164,4 +164,10 @@ export class MenuItemService {
         }
         return menuItem;
     }
-} 
+
+    // Fetch Menu Categories
+    async fetchCategories() {
+        const categories = await MenuItem.distinct("category");
+        return categories;
+    }
+}

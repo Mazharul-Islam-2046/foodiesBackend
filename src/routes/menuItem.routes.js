@@ -7,6 +7,7 @@ import {
     getAllMenuItems,
     filterMenuItems,
     searchMenuItems,
+    fetchCategories,
 } from "../controllers/menu.controller.js";
 
 
@@ -20,6 +21,7 @@ menuItemRouter.route("/getMenuItem/:id").get(getMenuItem);
 menuItemRouter.route("/getAllMenuItems").get(getAllMenuItems);
 menuItemRouter.route("/getFilterMenuItems").get(filterMenuItems);
 menuItemRouter.route("/searchMenuItems").get(searchMenuItems);
+menuItemRouter.route("/fetchCategories").get(fetchCategories);
 
 
 export default menuItemRouter;

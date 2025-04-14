@@ -74,5 +74,13 @@ export const deleteMenuItem = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, menuItem, "Menu item deleted successfully"));
 })
 
+// Fetch Menu Categories
+export const fetchCategories = asyncHandler(async (req, res) => {
+    const categories = await menuItemService.fetchCategories();
+    return res
+        .status(200)
+        .json(new ApiResponse(200, categories, "Categories retrieved successfully"));
+})
+
 
 
