@@ -110,14 +110,14 @@ export class MenuItemService {
 
 
 
-        const response = {
+        return  {
             menuItems,
             currentPage: page,
             limit,
             totalPages: Math.ceil(totalMenuItems / limit),
-            totalMenuItems
+            totalMenuItems,
+            nextPage: undefined
         };
-        return response;
     }
 
 
