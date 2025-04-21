@@ -8,6 +8,7 @@ import {
     filterMenuItems,
     searchMenuItems,
     fetchCategories,
+    getMenuItemsByIds,
 } from "../controllers/menu.controller.js";
 
 
@@ -22,6 +23,7 @@ menuItemRouter.route("/getAllMenuItems").get(getAllMenuItems);
 menuItemRouter.route("/getFilterMenuItems").get(filterMenuItems);
 menuItemRouter.route("/searchMenuItems").get(searchMenuItems);
 menuItemRouter.route("/fetchCategories").get(fetchCategories);
+menuItemRouter.route("/getMenuItemsByIds").get(getMenuItemsByIds);
 
 
 export default menuItemRouter;

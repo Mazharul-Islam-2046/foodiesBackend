@@ -13,6 +13,17 @@ export const getMenuItem = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, menuItem, "Food item retrieved successfully"));
 })
 
+// Get menu items by ids
+export const getMenuItemsByIds = asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const ids = req.query.ids;
+    const menuItems = await menuItemService.getMenuItemsByIds(page, limit, ids);
+    return res
+        .status(200)
+        .json(new ApiResponse(200, menuItems, "Food items retrieved successfully"));
+})
+
 // Get all menu items
 export const getAllMenuItems = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;

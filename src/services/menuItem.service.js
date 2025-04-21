@@ -11,6 +11,20 @@ export class MenuItemService {
         return menuItem;
     }
 
+
+    // Get menu items by ids
+    async getMenuItemsByIds(page, limit, ids) {
+        const menuItems = await MenuItem.find({ _id: { $in: ids } })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+
+        if (!menuItems.length > 0) {
+            throw new ApiError("No food items found", 404);
+        }
+        return menuItems;
+    }
+
     // Get all menu items
     async getAllMenuItems(page, limit) {
 
