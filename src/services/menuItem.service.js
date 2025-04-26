@@ -59,8 +59,6 @@ export class MenuItemService {
     // Filter menu items
     async filterMenuItems({ page, limit, filters, sortBy }) {
 
-        console.log("filters: ", filters)
-        console.log("sortBy: ", sortBy);
 
         const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy, isPpopular, spicyLevel, dietaryPreferences } = filters;
         const query = {};
@@ -79,8 +77,6 @@ export class MenuItemService {
         if (dietaryPreferences) query.dietaryPreferences = { $all: dietaryPreferences };
 
 
-
-        console.log("query: ", query);
 
         // Get total menu items with filters
         const totalMenuItems = await MenuItem.countDocuments(query);

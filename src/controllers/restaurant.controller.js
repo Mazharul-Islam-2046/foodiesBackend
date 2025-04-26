@@ -27,3 +27,22 @@ export const getAllRestaurants = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, restaurants, "Restaurants retrieved successfully"));
 })
+
+
+
+
+// Fillter Restaurants
+export const filterRestaurants = asyncHandler(async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const filters = req.body;
+    const sortBy = req.query.sortBy;
+
+
+
+    
+    const restaurants = await restaurantService.filterRestaurants({filters, page, limit, sortBy});
+    return res
+        .status(200)
+        .json(new ApiResponse(200, restaurants, "Restaurants retrieved successfully"));
+})
