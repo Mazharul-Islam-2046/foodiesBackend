@@ -14,6 +14,10 @@ const restaurantSchema = new Schema(
       type: String,
       required: true,
     },
+    imageUrl: {
+      type: String,
+      required: true,
+    },
     cuisineType: {
       type: String,
       required: true,
@@ -37,6 +41,16 @@ const restaurantSchema = new Schema(
       },
     ],
     description: { type: String },
+    location: {
+      type: {
+        type: String,
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
     reviews: [
       {
         type: Schema.Types.ObjectId,

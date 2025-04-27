@@ -11,6 +11,20 @@ export class MenuItemService {
         return menuItem;
     }
 
+
+    // Get menu items by ids
+    async getMenuItemsByIds(page, limit, ids) {
+        const menuItems = await MenuItem.find({ _id: { $in: ids } })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+
+        if (!menuItems.length > 0) {
+            throw new ApiError("No food items found", 404);
+        }
+        return menuItems;
+    }
+
     // Get all menu items
     async getAllMenuItems(page, limit) {
 
@@ -45,8 +59,6 @@ export class MenuItemService {
     // Filter menu items
     async filterMenuItems({ page, limit, filters, sortBy }) {
 
-        console.log("filters: ", filters)
-        console.log("sortBy: ", sortBy);
 
         const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy, isPpopular, spicyLevel, dietaryPreferences } = filters;
         const query = {};
@@ -65,8 +77,6 @@ export class MenuItemService {
         if (dietaryPreferences) query.dietaryPreferences = { $all: dietaryPreferences };
 
 
-
-        console.log("query: ", query);
 
         // Get total menu items with filters
         const totalMenuItems = await MenuItem.countDocuments(query);
