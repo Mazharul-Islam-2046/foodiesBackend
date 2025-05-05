@@ -18,7 +18,7 @@ userRouter.route("/auth/login").post(loginUser);
 
 
 //secure routes
-userRouter.route("/updateUser").put(verifyJWT,updateUser);
+userRouter.route("/profile/updateUser").put(verifyJWT,updateUser);
 userRouter.route("/auth/logout").post(verifyJWT,logoutUser);
 userRouter.route("/getAllUsers").get(verifyJWT,getAllUsers);
 userRouter.route("/getUserById/:id").get(verifyJWT,getUserById);

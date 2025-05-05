@@ -3,26 +3,16 @@ import { ApiError } from "../utils/ApiError.js"
 import { User } from "../models/user.model.js"
 // import { uploadOnCloudinary } from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { userService } from "../services/user.service.js";
 
 
 
+const COOKIE_OPTIONS = {
+    httpOnly: true,
+    secure: true,
+    maxAge: process.env.ACCESS_TOKEN_EXPIRY
+};
 
-const generateAccessAndRefereshTokens = async (userId) => {
-    try {
-        const user = await User.findById(userId)
-        const accessToken = user.generateAccessToken()
-        const refreshToken = user.generateRefreshToken()
-
-        user.refreshToken = refreshToken
-        await user.save({ validateBeforeSave: false })
-
-        return { accessToken, refreshToken }
-
-
-    } catch (error) {
-        throw new ApiError(500, "Something went wrong while generating referesh and access token")
-    }
-}
 
 
 // @desc    Register user
@@ -35,120 +25,89 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError("Please provide all values", 400);
     }
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-        throw new ApiError("User already exists", 400);
-    }
 
-    const user = await User.create({
-        name,
-        email,
-        password,
-        phone,
-        address
-    });
-
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
+    const createdUser = await userService.registerUserService(req.body);
 
     if (createdUser) {
-        return res.status(201).json(
-            new ApiResponse(201, "User created successfully", createdUser)
-        )
-    } else {
-        throw new ApiError("User not found", 400);
+        return res
+        .status(201)
+        .json(new ApiResponse(201, createdUser, "User registered successfully"));
     }
 });
 
 
-// @desc    Login user
-// @route   POST /api/v1/users/auth/login
-// @access  Public
 
+/**
+ * desc    Login user
+ * route   POST /api/v1/users/auth/login
+ * access  Public
+ */
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
+
     if (!email || !password) {
-        throw new ApiError("Please provide all values", 400);
-    }
-    const user = await User.findOne({ email });
-
-    if (!user) {
-        throw new ApiError("User not found", 400);
+        throw new ApiError(400, "Email and password are required");
     }
 
-    if (!(await user.isPasswordCorrect(password))) {
-        throw new ApiError("Incorrect password", 400);
-    }
+    const { user, accessToken, refreshToken } = await userService.loginUserService({ email, password });
 
-    const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(user._id)
-
-    const options = {
-        httpOnly: true,
-        secure: true
-    }
-
-    const loggedInUser = {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        address: user.address
-    }
-
+    // Update last login
+    // await user.updateLastLogin();
 
     return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, COOKIE_OPTIONS)
+        .cookie("refreshToken", refreshToken, COOKIE_OPTIONS)
         .json(
             new ApiResponse(
                 200,
                 {
-                    user: loggedInUser, accessToken, refreshToken
+                    user: {
+                        _id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        role: user.role,
+                        status: user.status,
+                        phone: user.phone,
+                        profileImage: user.profileImage
+                    },
+                    accessToken,
+                    refreshToken
                 },
-                "User logged In Successfully"
+                "Login successful"
             )
-        )
+        );
 });
 
 
 
-// @desc    Update user
-// @route   PUT /api/v1/users/updateUser
-// @access  Private
-
+/**
+ * desc    Update user
+ * route   PUT /api/v1/users/profile/updateUser
+ * access  Private
+ */
 const updateUser = asyncHandler(async (req, res) => {
-    const { name, email, phone, address } = req.body;
-    if (!name && !email && !phone && !address) {
-        throw new ApiError("Please provide at least one value", 400);
-    }
-    const user = await User.findById(req.user._id);
-    if (user) {
+    // const userId = req.user._id;
+    const { name, email, password, userId } = req.body;
 
-        // update user
-        if (name) user.name = name;
-        if (email) user.email = email;
-        if (phone) user.phone = phone;
-        if (address) user.address = address;
-        const updatedUser = await user.save();
+    // Only allow certain fields to be updated
+    const allowedUpdates = {
+        ...(name && { name }),
+        ...(email && { email }),
+        ...(password && { password }),
+        ...(address && { address }),
+        ...(phone && { phone }),
+        ...(role && { role }),
+        ...(isActive && { isActive }),
+    };
 
+    // Model validation will handle:
+    // - Phone number format
+    const updatedUser = await userService.updateUserService(userId, allowedUpdates);
 
-        // send response
-        return res.status(200).json(
-            new ApiResponse(
-                200,
-                {
-                    _id: updatedUser._id,
-                    name: updatedUser.name,
-                    email: updatedUser.email,
-                    phone: updatedUser.phone,
-                    address: updatedUser.address,
-                },
-                "User updated successfully"
-            )
-        )
-    } else {
-        throw new ApiError("User not found", 400);
-    }
+    return res
+        .status(200)
+        .json(new ApiResponse(200, updatedUser, "Profile updated successfully"));
 });
 
 
@@ -158,25 +117,15 @@ const updateUser = asyncHandler(async (req, res) => {
 // @access  Private
 
 const logoutUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    if (user) {
-        user.refreshToken = "";
-        const updatedUser = await user.save();
-        res.status(200).json(
-            new ApiResponse(
-                200,
-                {
-                    _id: updatedUser._id,
-                    name: updatedUser.name,
-                    email: updatedUser.email,
-                    phone: updatedUser.phone,
-                    address: updatedUser.address,
-                },
-                "User logged out successfully"
-            )
-        );
-    } else {
-        throw new ApiError("User not found", 400);
+    const isLoggedOut = await userService.logoutUserService(req.user._id);
+
+    
+    if (isLoggedOut) {
+        return res
+        .clearCookie("accessToken")
+        .clearCookie("refreshToken")
+        .status(200)
+        .json(new ApiResponse(200, null, "Logged out successfully"));
     }
 });
 
