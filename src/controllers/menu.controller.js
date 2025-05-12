@@ -40,7 +40,8 @@ export const getAllMenuItems = asyncHandler(async (req, res) => {
 export const filterMenuItems = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const filters = req.body;
+    const filters = req.query;
+    console.log("Backend Filters",filters)
     const sortBy = req.query.sortBy;
 
 
