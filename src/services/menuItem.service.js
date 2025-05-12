@@ -60,7 +60,7 @@ export class MenuItemService {
     async filterMenuItems({ page, limit, filters, sortBy }) {
 
 
-        const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy, isPpopular, spicyLevel, dietaryPreferences, rating } = filters;
+        const { searchName, category, minPrice, maxPrice, freeDelivery, isHealthy, isPpopular, spiceLevel, dietaryPreferences, rating } = filters;
         const query = {};
 
         if (searchName) query.name = { $regex: searchName, $options: "i" };
@@ -74,7 +74,7 @@ export class MenuItemService {
         if (isHealthy) query.healthy = true;
         if (rating) query.popularity = { $gte: rating };
         if (isPpopular) query.popularity = { $gte: 85 };
-        if (spicyLevel) query.spiceLevel = { $regex: spicyLevel, $options: "i" };
+        if (spiceLevel) query.spiceLevel = { $regex: spiceLevel, $options: "i" };
         if (dietaryPreferences) query.dietaryPreferences = { $all: dietaryPreferences };
 
 
