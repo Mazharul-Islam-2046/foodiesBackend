@@ -21,7 +21,7 @@ const COOKIE_OPTIONS = {
 
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password, phone, address } = req.body;
-    if (!name || !email || !password || !phone || !address) {
+    if (!name || !email || !password || !phone) {
         throw new ApiError("Please provide all values", 400);
     }
 
