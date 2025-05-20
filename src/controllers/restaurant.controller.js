@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { RestaurantServices } from "../services/restaurant.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { ApiError } from "../utils/ApiError.js";
 
 const restaurantService = new RestaurantServices();
 
@@ -49,19 +50,8 @@ export const getFilterRestaurants = asyncHandler(async (req, res) => {
 
 // Get unique categories
 export const getUniqueCategories = asyncHandler(async (req, res) => {
-  try {
-    const categories =
-      await this.restaurantCategoryService.getUniqueCategories();
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          categories,
-          "Unique restaurant categories fetched successfully"
-        )
-      );
-  } catch (error) {
-    next(error);
-  }
+  const categories = await restaurantService.getUniqueCategories();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, categories, "Categories retrieved successfully"));
 });

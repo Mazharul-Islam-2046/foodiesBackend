@@ -201,25 +201,14 @@ export class RestaurantServices {
     }
   }
 
-
-
   async getUniqueCategories() {
-        try {
-            // Use MongoDB's distinct operation on the categories field
-            // This will automatically flatten the array fields and return unique values
-            const uniqueCategories = await Restaurant.distinct("categories");
-            
-            if (!uniqueCategories || uniqueCategories.length === 0) {
-                throw new ApiError("No categories found", 404);
-            }
-            
-            // Sort categories alphabetically for better usability
-            return uniqueCategories.sort();
-        } catch (error) {
-            if (error instanceof ApiError) {
-                throw error;
-            }
-            throw new ApiError(`Error fetching unique restaurant categories: ${error.message}`, 500);
-        }
-    }
+    const uniqueCategories = await Restaurant.aggregate([
+      { $unwind: "$categories" },
+      { $group: { _id: "$categories" } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const categories = uniqueCategories.map((item) => item._id);
+    return categories;
+  }
 }
