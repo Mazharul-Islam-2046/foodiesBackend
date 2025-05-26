@@ -71,7 +71,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
   // Update last login
   // await user.updateLastLogin();
-
   return res
     .status(200)
     .cookie("accessToken", accessToken, COOKIE_OPTIONS)
@@ -158,11 +157,40 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 // @desc    Get user by id
-// @route   GET /api/v1/getUserById/:id
+// @route   GET /api/v1/users/getUserById/:id
 // @access  Private
 
 const getUserById = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
+  if (user) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+        },
+        "User found successfully"
+      )
+    );
+  } else {
+    throw new ApiError("User not found", 400);
+  }
+});
+
+
+
+/*
+ * desc    Get user by email
+ * route   GET /api/v1/users/getUserByEmail/:email
+ * access  Private
+ */
+
+const getUserByEmail = asyncHandler(async (req, res) => {
+  const user = await User.findOne({ email: req.params.email });
   if (user) {
     return res.status(200).json(
       new ApiResponse(
@@ -189,4 +217,5 @@ export {
   logoutUser,
   getAllUsers,
   getUserById,
+  getUserByEmail
 };

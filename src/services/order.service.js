@@ -1,89 +1,94 @@
 import { Order } from "../models/order.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
+class OrderService {
+  // Count the total number of orders
+  async countOrders() {
+    return await Order.countDocuments();
+  }
 
+  // count the total number of orders for a specific user
+  async countOrdersByUser(userId) {
+    return await Order.countDocuments({ user: userId });
+  }
 
-export class OrderService {
+  // count the total number of orders for a specific restaurant
+  async countOrdersByRestaurant(restaurantId) {
+    return await Order.countDocuments({ restaurant: restaurantId });
+  }
 
-    
-    // Count the total number of orders
-    async countOrders() {
-        return await Order.countDocuments();
-    }
+  // get all orders
+  async getAllOrders() {
+    return await Order.find();
+  }
 
+  // get all orders for a specific user
+  async getAllOrdersByUser(userId) {
+    return await Order.find({ user: userId });
+  }
 
-    // count the total number of orders for a specific user
-    async countOrdersByUser(userId) {
-        return await Order.countDocuments({ user: userId });
-    }
+  // get all orders for a specific restaurant
+  async getAllOrdersByRestaurant(restaurantId) {
+    return await Order.find({ restaurant: restaurantId });
+  }
 
-    // count the total number of orders for a specific restaurant
-    async countOrdersByRestaurant(restaurantId) {
-        return await Order.countDocuments({ restaurant: restaurantId });
-    }
+  // get a single order by id
+  async getOrderById(id) {
+    return await Order.findById(id);
+  }
 
-    // get all orders
-    async getAllOrders() {
-        return await Order.find();
-    }
+  // count the totalAmount of orders
+  async getTotalAmountOfOrders() {
+    return await Order.aggregate([
+      { $group: { _id: null, totalAmount: { $sum: "$totalAmount" } } },
+    ]);
+  }
 
-    // get all orders for a specific user
-    async getAllOrdersByUser(userId) {
-        return await Order.find({ user: userId });
-    }
+  // get the totalAmount of orders for a specific user
+  async getTotalAmountOfOrdersByUser(userId) {
+    return await Order.aggregate([
+      {
+        $match: { user: userId },
+        $group: { _id: null, totalAmount: { $sum: "$totalAmount" } },
+      },
+    ]);
+  }
 
-    // get all orders for a specific restaurant
-    async getAllOrdersByRestaurant(restaurantId) {
-        return await Order.find({ restaurant: restaurantId });
-    }
+  // get the totalAmount of orders for a specific restaurant
+  async getTotalAmountOfOrdersByRestaurant(restaurantId) {
+    return await Order.aggregate([
+      {
+        $match: { restaurant: restaurantId },
+        $group: { _id: null, totalAmount: { $sum: "$totalAmount" } },
+      },
+    ]);
+  }
 
-    // get a single order by id
-    async getOrderById(id) {
-        return await Order.findById(id);
-    }
+  // create a new order
+  async createOrder(data) {
+    const { items, user, status, discountApplied, deliveryAddress } = data;
 
-    // count the totalAmount of orders
-    async getTotalAmountOfOrders() {
-        return await Order.aggregate([{ $group: { _id: null, totalAmount: { $sum: "$totalAmount" } } }]);
-    }
+    const totalAmount = items.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
 
-    // get the totalAmount of orders for a specific user
-    async getTotalAmountOfOrdersByUser(userId) {
-        return await Order.aggregate([{ $match: { user: userId }, $group: { _id: null, totalAmount: { $sum: "$totalAmount" } } }]);
-    }
+    const restaurants = items
+      .map((item) => item.menuItems?.restaurant)
+      .filter(Boolean); // removes undefined or null
 
-    // get the totalAmount of orders for a specific restaurant
-    async getTotalAmountOfOrdersByRestaurant(restaurantId) {
-        return await Order.aggregate([{ $match: { restaurant: restaurantId }, $group: { _id: null, totalAmount: { $sum: "$totalAmount" } } }]);
-    }
+    const order = await Order.create({
+      items,
+      user,
+      totalAmount,
+      status,
+      discountApplied,
+      deliveryAddress,
+      restaurants,
+    });
 
-    // create a new order
-    async createOrder(req) {
-        const { items, userId, restaurantId } = req.body;
-
-        if (!items?.length || !userId || !restaurantId) {
-            throw new ApiError("Missing required order details", 400);
-        }
-        const totalAmount = items.reduce((total, item) => {
-            return total + (item.price * item.quantity);
-        }, 0);
-
-        const order = await Order.create({
-            items,
-            user: userId,
-            restaurant: restaurantId,
-            totalAmount
-        });
-
-        return order;
-    }
+    return order;
+  }
 }
 
 
-
-
-
-
-
-
-
+export const orderService = new OrderService();

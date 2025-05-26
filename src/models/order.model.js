@@ -3,11 +3,13 @@ import mongoose, { Schema } from "mongoose";
 const orderSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    restaurant: {
+    restaurants: [
+      {
       type: Schema.Types.ObjectId,
       ref: "Restaurant",
       required: true,
-    },
+    }
+  ],
     items: [
       {
         menuItem: {

@@ -57,6 +57,8 @@ class UserService {
       const accessToken = user.generateAccessToken();
       const refreshToken = user.generateRefreshToken();
 
+      
+
       // Save refresh token
       user.refreshToken = refreshToken;
       await user.save({ validateBeforeSave: false });
@@ -135,7 +137,7 @@ class UserService {
 
     // Update user
     const updatedUser = Object.assign(user, updateData); // Merge updateData into user overwriting existing values of the same key
-    console.log(updatedUser);
+    
     await user.save();
 
     return await User.findById(userId).select("-password").lean();

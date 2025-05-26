@@ -1,34 +1,26 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Order } from "../models/order.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-
+import { orderService } from "../services/order.service.js";
+import { ApiError } from "../utils/ApiError.js";
 
 // Place an order
 export const placeOrder = asyncHandler(async (req, res) => {
-    const { items, userId, restaurantId } = req.body;
-    
-    if (!items?.length || !userId || !restaurantId) {
-        throw new ApiError("Missing required order details", 400);
-    }
-    const totalAmount = items.reduce((total, item) => {
-        return total + (item.price * item.quantity);
-    }, 0);
+  const { items, userId, deliveryAddress } = req.body;
 
-    const order = await Order.create({
-        items,
-        user: userId,
-        restaurant: restaurantId,
-        totalAmount
-    });
+  if (!items?.length || !userId || !deliveryAddress) {
+    throw new ApiError("Missing required order details", 400);
+  }
+  
 
-    return res
-        .status(201)
-        .json(
-            new ApiResponse(
-                201,
-                order,
-                "Order created successfully"
-            )
-        );
+  const order = await orderService.createOrder({
+    items,
+    user: userId,
+    status: "pending",
+    discountApplied: false,
+    deliveryAddress,
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, order, "Order created successfully"));
 });
-

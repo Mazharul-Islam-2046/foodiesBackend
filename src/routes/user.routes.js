@@ -5,7 +5,8 @@ import {
     updateUser,
     logoutUser,
     getAllUsers,
-    getUserById
+    getUserById,
+    getUserByEmail
 } from "../controllers/user.controller.js";
 import {verifyJWT} from "../middlewares/auth.middleware.js"
 
@@ -22,6 +23,7 @@ userRouter.route("/profile/updateUser").put(verifyJWT,updateUser);
 userRouter.route("/auth/logout").post(verifyJWT,logoutUser);
 userRouter.route("/getAllUsers").get(verifyJWT,getAllUsers);
 userRouter.route("/getUserById/:id").get(verifyJWT,getUserById);
+userRouter.route("/getUserByEmail/:email").get(verifyJWT,getUserByEmail);
 
 
 export default userRouter;
