@@ -69,6 +69,12 @@ const userSchema = new Schema(
         ref: "MenuItem",
       },
     ],
+    favorites: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "MenuItem",
+      },
+    ],
     isActive: {
       type: Boolean,
       default: true,
