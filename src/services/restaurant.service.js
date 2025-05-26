@@ -201,6 +201,8 @@ export class RestaurantServices {
     }
   }
 
+
+//   Get unique categories
   async getUniqueCategories() {
     const uniqueCategories = await Restaurant.aggregate([
       { $unwind: "$categories" },

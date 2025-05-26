@@ -34,7 +34,6 @@ const userSchema = new Schema(
     },
     phone: {
       type: String,
-      required: [true, "Phone number is required"],
       match: [
         /^(?:\+8801|01)[3-9][0-9]{8}$/,
         "Please enter a valid phone number",
