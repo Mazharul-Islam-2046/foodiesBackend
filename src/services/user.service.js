@@ -216,6 +216,41 @@ class UserService {
     }
     return user;
   }
+
+  async getFavouriteFoodsService(userId) {
+    const user = await User.findById(userId).lean();
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    return user.favoriteFoods;
+  }
+
+
+  async updateFavouriteFoodsService(foodId, action, userId) {
+    try {
+    const update =
+      action === 'add'
+        ? { $addToSet: { favoriteFoods: foodId } }  // avoids duplicates
+        : { $pull: { favoriteFoods: foodId } };     // removes if present
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      update,
+      { new: true } // return updated document
+    );
+
+    if (!user) throw new ApiError(404, "User not found");
+
+    return user.favoriteFoods;
+
+
+  } catch (err) {
+    throw new ApiError(500, err.message);
+  }
+  }
 }
+
+
+
 
 export const userService = new UserService();

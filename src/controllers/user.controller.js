@@ -210,6 +210,36 @@ const getUserByEmail = asyncHandler(async (req, res) => {
   }
 });
 
+
+const getFavouriteFoods = asyncHandler(async (req, res) => {
+  const favouriteFoods = await userService.getFavouriteFoodsService(req.params.id);
+  console.log(req.params.id)
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, favouriteFoods, "Favourite Foods retrieved successfully"));
+});
+
+const updateFavouriteFoods = asyncHandler(async (req, res) => {
+  const { foodId, action } = req.body;
+  const userId = req.params.id;
+
+  if (!foodId || !['add', 'remove'].includes(action)) {
+    return res.status(400).json({ error: 'Invalid request' });
+  }
+
+
+  const updatedFavouriteFoods = await userService.updateFavouriteFoodsService(
+    foodId,
+    action,
+    userId
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedFavouriteFoods, "Favourite Foods List got updated successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -217,5 +247,7 @@ export {
   logoutUser,
   getAllUsers,
   getUserById,
-  getUserByEmail
+  getUserByEmail,
+  getFavouriteFoods,
+  updateFavouriteFoods
 };

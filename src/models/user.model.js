@@ -69,7 +69,7 @@ const userSchema = new Schema(
         ref: "MenuItem",
       },
     ],
-    favorites: [
+    favoriteFoods: [
       {
         type: Schema.Types.ObjectId,
         ref: "MenuItem",
